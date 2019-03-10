@@ -1,0 +1,11 @@
+{
+  "express": {
+    "port": "2466",
+    "root": "/api"
+  },
+  "mongo": {
+    "host": "127.0.0.1",
+    "port": "27017",
+    "database": "agonizer"
+  }
+}
