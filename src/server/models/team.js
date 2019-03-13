@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Player from "./player";
+import GlobalEmitter from '../util/globalEmitter';
 
 const Schema = mongoose.Schema;
 
@@ -9,7 +10,7 @@ const TeamSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Player',
     }],
-    skillLevelSum: Number,
+    currentSkillLevelSum: Number,
 }, {
     timestamps: true,
 });
@@ -23,11 +24,19 @@ TeamSchema.pre('save', async function(next) {
         }
     }).lean();
 
-    this.skillLevelSum = players.reduce((count, current) => {
+    this.currentSkillLevelSum = players.reduce((count, current) => {
         return count + current.skillLevel;
     }, 0);
 
     next();
+});
+
+TeamSchema.post('save', () => {
+    GlobalEmitter.emit('teams-update');
+});
+
+TeamSchema.post('deleteOne', () => {
+    GlobalEmitter.emit('teams-update');
 });
 
 const Team = mongoose.model('Team', TeamSchema);

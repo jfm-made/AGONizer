@@ -1,5 +1,6 @@
 import express from 'express';
 import Player from '../models/player';
+import Team from '../models/team';
 
 const router = new express.Router();
 
@@ -7,6 +8,12 @@ const basePath = '/player';
 
 router.post(basePath, async (req, res) => {
     try {
+        if (req.body.firstName === '' || req.body.lastName === '' || req.body.nickName === '' || isNaN(req.body.skillLevel)) {
+            return res.status(500).json({
+                message: 'Data is missing',
+            });
+        }
+
         const player = new Player({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -31,7 +38,11 @@ router.post(basePath, async (req, res) => {
 
 // TODO Add limit and pagination to params
 router.get(basePath, async (req, res) => {
-    const players = await Player.find().limit(100);
+    const players = await Player.find()
+        .limit(100)
+        .sort({
+            nickName: 1,
+        });
 
     res.json(players);
 });
@@ -83,7 +94,19 @@ router.put(`${basePath}/:id`, async (req, res) => {
 
 router.delete(`${basePath}/:id`, async (req, res) => {
     try {
-        const response = await Player.deleteOne({_id: req.params.id});
+        const id = req.params.id;
+        const response = await Player.deleteOne({_id: id});
+
+        // Remove player id from teams
+        const team = await Team.findOne({players: id});
+
+        if (team) {
+            team.players = team.players.filter(x => {
+                return x.toString() !== id;
+            });
+
+            await team.save();
+        }
 
         if (response && response.n === 1) {
             return res.json({

@@ -1,5 +1,5 @@
 import express from 'express';
-import Team from '../models/teams';
+import Team from '../models/team';
 import Player from "../models/player";
 
 const router = new express.Router();
