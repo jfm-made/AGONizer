@@ -69,3 +69,4 @@ I wish to also have motivation to implement the following:
 - Dark theme (Man this white antd standard is ugly. Don't ever switch to it from a dark themed IDE)
 - Add Dockerfile and compose for application and database
 - Add and use eslint
+- Add PostMan-collection for all possible requests

@@ -2,6 +2,7 @@ import express from 'express';
 
 import playersRouter from './players';
 import teamsRouter from './teams';
+import matchesRouter from './matches';
 
 const router = new express.Router();
 
@@ -16,5 +17,6 @@ router.get('/hello', (req, res) => {
 
 router.use(playersRouter);
 router.use(teamsRouter);
+router.use(matchesRouter);
 
 export default router;
