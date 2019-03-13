@@ -10,6 +10,9 @@ import {
     getExpressConfig,
 } from './util/configuration';
 import router from './routes'
+import { monitorModelCollection } from './util/mongoChangeListener';
+import Player from './models/player';
+import Team from './models/team';
 
 const log = debug('server:index');
 
@@ -40,4 +43,11 @@ const expressServer = httpServer.listen(expressConfig.port);
 
 expressServer.on('listening', () => {
     log(`Server is listening on port ${expressConfig.port} with base ${expressConfig.root}`);
+});
+
+monitorModelCollection(Player, () => {
+    console.log('changed players');
+});
+monitorModelCollection(Team, () => {
+    console.log('changed teams');
 });
